@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Container, Header, Menu } from 'semantic-ui-react';
+import React, { Component } from 'react'
+import { Container, Header, Menu } from 'semantic-ui-react'
 
-import './App.css';
+import './App.css'
 
 class App extends Component {
   render() {
@@ -18,8 +18,8 @@ class App extends Component {
           <Header as="h1">Life in Weeks</Header>
         </Container>
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App

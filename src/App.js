@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Container, Header, Menu } from 'semantic-ui-react'
+import { Container, Grid, Header, Menu } from 'semantic-ui-react'
 import WeekMatrix from './components/WeekMatrix'
+import Config from './components/Config'
 
 import './App.css'
 
@@ -18,10 +19,17 @@ class App extends Component {
             </Menu.Item>
           </Container>
         </Menu>
-        <Container text className="App-container">
-          <Header as="h1">Life in Weeks</Header>
-          <WeekMatrix cells={cells} />
-        </Container>
+        <Grid container columns={2}>
+          <Grid.Row />
+          <Grid.Column>
+            <Header as="h1">Life in Weeks</Header>
+            <WeekMatrix cells={cells} />
+          </Grid.Column>
+          <Grid.Column>
+            <Header as="h2">Config</Header>
+            <Config />
+          </Grid.Column>
+        </Grid>
       </div>
     )
   }

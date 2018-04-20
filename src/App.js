@@ -6,7 +6,21 @@ import Config from './components/Config'
 import './App.css'
 
 class App extends Component {
+  state = {
+    profile: {
+      dob: '2018/04/19',
+      lifeExpectancy: 80
+    }
+  }
+
+  editProfile = change => {
+    const { profile } = this.state
+    const newProfile = Object.assign({}, profile, change)
+    this.setState({ profile: newProfile })
+  }
+
   render() {
+    const { profile } = this.state
     const lifeExpectancy = 80
     const cells = new Array(lifeExpectancy * 52)
 
@@ -27,7 +41,7 @@ class App extends Component {
           </Grid.Column>
           <Grid.Column>
             <Header as="h2">Config</Header>
-            <Config />
+            <Config profile={profile} editProfile={this.editProfile} />
           </Grid.Column>
         </Grid>
       </div>

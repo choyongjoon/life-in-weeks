@@ -10,7 +10,7 @@ class WeekMatrix extends Component {
 
   renderMonth = ({ index, cellIndex }) => {
     const x = cellIndex * cellWidth
-    const y = 10
+    const y = 24
 
     return (
       <text

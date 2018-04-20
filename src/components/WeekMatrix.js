@@ -5,7 +5,7 @@ import range from 'lodash/range'
 
 class WeekMatrix extends Component {
   static propTypes = {
-    cells: PropTypes.array.isRequired
+    years: PropTypes.array.isRequired
   }
 
   renderMonth = ({ index, cellIndex }) => {
@@ -42,46 +42,52 @@ class WeekMatrix extends Component {
     )
   }
 
-  renderWeekCell = (i, j) => {
-    const { cells } = this.props
-    const cellIndex = i * numWeeks + j
-    const cell = cells[cellIndex] || {}
-    const style = Object.assign({}, cell.style, defaultCellStyle)
+  renderWeekCell = (week = {}, j) => {
+    const { index, title, numDays } = week
+    const style = Object.assign({}, week.style, defaultCellStyle)
     const { stroke, fill } = style
 
+    const isLastWeek = index % numWeeks === numWeeks - 1
+    let width = cellWidth
+    if (isLastWeek) width = cellWidth - 7 + numDays
+    console.log(isLastWeek, width)
     return (
       <rect
-        key={cellIndex}
+        key={index}
         x={j * cellWidth}
-        y={i * cellHeight}
+        y={0}
         height={cellHeight}
-        width={cellWidth}
+        width={width}
         stroke={stroke}
         fill={fill}
-        data-tip={cell ? cell.title : ''}
+        data-tip={title}
       />
     )
   }
 
-  renderWeekRow = (i, numColumns = numWeeks) => {
-    return range(numColumns).map(j => {
-      return this.renderWeekCell(i, j)
-    })
+  renderYearRow = (year, i) => {
+    const { weeks } = year
+    const x = 0
+    const y = i * cellHeight
+    return (
+      <g key={i} transform={`translate(${x},${y})`}>
+        {weeks.map(this.renderWeekCell)}
+      </g>
+    )
   }
 
   render() {
-    const { cells } = this.props
-    const numRows = Math.ceil(cells.length / numWeeks)
+    const { years } = this.props
+    const numRows = years.length
 
-    const ages = range(Math.ceil(numRows / ageDistance)).map(
-      x => x * ageDistance
-    )
+    const height = numRows * cellHeight
+    const width = numWeeks * cellWidth + 2
 
     const months = []
-    if (cells.length >= 52) {
+    if (years.length > 0) {
       let currentMonth = null
       for (let i = 0; i < 52; i++) {
-        const month = cells[i].start.getMonth()
+        const month = years[0].weeks[i].start.getMonth()
         if (currentMonth !== month) {
           currentMonth = month
           months.push({ index: month, cellIndex: i })
@@ -89,16 +95,9 @@ class WeekMatrix extends Component {
       }
     }
 
-    const rows = range(numRows - 1).map(i => {
-      return this.renderWeekRow(i)
-    })
-    const finalRow = this.renderWeekRow(
-      numRows - 1,
-      cells.length - (numRows - 1) * numWeeks
+    const ages = range(Math.ceil(numRows / ageDistance)).map(
+      x => x * ageDistance
     )
-
-    const height = numRows * cellHeight
-    const width = numWeeks * cellWidth
 
     return (
       <div>
@@ -110,8 +109,7 @@ class WeekMatrix extends Component {
             {ages.map(this.renderAge)}
           </g>
           <g transform={`translate(${marginLeft}, ${marginTop})`}>
-            {rows}
-            {finalRow}
+            {years.map(this.renderYearRow)}
           </g>
         </svg>
         <ReactTooltip />

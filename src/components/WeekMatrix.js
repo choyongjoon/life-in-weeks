@@ -50,7 +50,7 @@ class WeekMatrix extends Component {
     const isLastWeek = index % numWeeks === numWeeks - 1
     let width = cellWidth
     if (isLastWeek) width = cellWidth - 7 + numDays
-    console.log(isLastWeek, width)
+
     return (
       <rect
         key={index}

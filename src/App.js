@@ -15,6 +15,10 @@ class App extends Component {
     profile: {
       dob: '2018-04-19',
       lifeExpectancy: 80
+    },
+    calendar: {
+      name: '',
+      events: []
     }
   }
 
@@ -24,8 +28,42 @@ class App extends Component {
     this.setState({ profile: newProfile })
   }
 
+  editCalendar = change => {
+    const { calendar } = this.state
+    const newCalendar = Object.assign({}, calendar, change)
+    this.setState({ calendar: newCalendar })
+  }
+
+  addEvent = () => {
+    const { calendar } = this.state
+    const lastId =
+      calendar.events.length > 0
+        ? calendar.events[calendar.events.length - 1].id
+        : 0
+    const event = {
+      id: lastId + 1,
+      name: '',
+      start: '',
+      end: '',
+      style: {}
+    }
+    const events = [...calendar.events, event]
+    this.editCalendar({ events })
+  }
+
+  editEvent = (eventId, change) => {
+    const { calendar } = this.state
+    const { events } = calendar
+    const eventIndex = events.findIndex(event => event.id === eventId)
+    if (eventIndex < 0) return
+
+    const newEvents = [...events]
+    newEvents[eventIndex] = Object.assign({}, events[eventIndex], change)
+    this.editCalendar({ events: newEvents })
+  }
+
   render() {
-    const { profile } = this.state
+    const { profile, calendar } = this.state
     const { dob, lifeExpectancy } = profile
 
     const numRows = Math.min(lifeExpectancy, 200)
@@ -91,7 +129,14 @@ class App extends Component {
           </Grid.Column>
           <Grid.Column>
             <Header as="h2">Config</Header>
-            <Config profile={profile} editProfile={this.editProfile} />
+            <Config
+              profile={profile}
+              calendar={calendar}
+              editProfile={this.editProfile}
+              editCalendar={this.editCalendar}
+              addEvent={this.addEvent}
+              editEvent={this.editEvent}
+            />
           </Grid.Column>
         </Grid>
       </div>

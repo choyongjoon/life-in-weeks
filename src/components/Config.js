@@ -98,7 +98,7 @@ class Config extends Component {
                         type="text"
                         value={event.start}
                         onChange={e =>
-                          editEvent(event.start, { start: e.target.value })
+                          editEvent(event.id, { start: e.target.value })
                         }
                       />
                     </Form.Field>
@@ -107,9 +107,9 @@ class Config extends Component {
                       <input
                         placeholder="2018-04-19"
                         type="text"
-                        value={event.start}
+                        value={event.end}
                         onChange={e =>
-                          editEvent(event.end, { end: e.target.value })
+                          editEvent(event.id, { end: e.target.value })
                         }
                       />
                     </Form.Field>
@@ -118,20 +118,16 @@ class Config extends Component {
                   <Form.Group widths="equal">
                     <Form.Select
                       inline
-                      label="Stroke"
+                      label="Color"
+                      name="fill"
                       options={colorOptions}
-                      value={event.stroke}
-                      onChange={e =>
-                        editEvent(event.id, { stroke: e.target.value })
-                      }
-                    />
-                    <Form.Select
-                      inline
-                      label="Fill"
-                      options={colorOptions}
-                      value={event.fill}
-                      onChange={e =>
-                        editEvent(event.id, { fill: e.target.value })
+                      value={event.style.fill}
+                      onChange={(e, { name, value }) =>
+                        editEvent(event.id, {
+                          style: Object.assign({}, event.style, {
+                            [name]: value
+                          })
+                        })
                       }
                     />
                   </Form.Group>

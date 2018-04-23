@@ -9,7 +9,7 @@ class WeekMatrix extends Component {
   }
 
   renderMonth = ({ index, cellIndex }) => {
-    const x = cellIndex * cellWidth
+    const x = cellIndex * (cellWidth + 2 * cellMargin)
     const y = 24
 
     return (
@@ -27,7 +27,7 @@ class WeekMatrix extends Component {
 
   renderAge = age => {
     const x = 24
-    const y = (age + 1) * cellHeight
+    const y = (age + 1) * (cellHeight + 2 * cellMargin)
 
     return (
       <text
@@ -44,8 +44,8 @@ class WeekMatrix extends Component {
 
   renderWeekCell = (week = {}, j) => {
     const { index, title, numDays } = week
-    const style = Object.assign({}, week.style, defaultCellStyle)
-    const { stroke, fill } = style
+    const style = Object.assign({}, defaultCellStyle, week.style)
+    const { fill } = style
 
     const isLastWeek = index % numWeeks === numWeeks - 1
     let width = cellWidth
@@ -54,11 +54,10 @@ class WeekMatrix extends Component {
     return (
       <rect
         key={index}
-        x={j * cellWidth}
+        x={j * (cellWidth + 2 * cellMargin)}
         y={0}
         height={cellHeight}
         width={width}
-        stroke={stroke}
         fill={fill}
         data-tip={title}
       />
@@ -68,7 +67,7 @@ class WeekMatrix extends Component {
   renderYearRow = (year, i) => {
     const { weeks } = year
     const x = 0
-    const y = i * cellHeight
+    const y = i * (cellHeight + 2 * cellMargin)
     return (
       <g key={i} transform={`translate(${x},${y})`}>
         {weeks.map(this.renderWeekCell)}
@@ -80,8 +79,8 @@ class WeekMatrix extends Component {
     const { years } = this.props
     const numRows = years.length
 
-    const height = numRows * cellHeight
-    const width = numWeeks * cellWidth + 2
+    const height = numRows * (cellHeight + 2 * cellMargin)
+    const width = numWeeks * (cellWidth + 2 + 2 * cellMargin)
 
     const months = []
     if (years.length > 0) {
@@ -126,9 +125,9 @@ const marginLeft = 30
 
 const ageDistance = 5
 
-const cellWidth = 9
-const cellHeight = 9
+const cellWidth = 7
+const cellHeight = 7
+const cellMargin = 1
 const defaultCellStyle = {
-  stroke: '#ffffff',
   fill: '#eeeeee'
 }

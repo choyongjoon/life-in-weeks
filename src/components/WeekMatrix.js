@@ -45,23 +45,37 @@ class WeekMatrix extends Component {
   renderWeekCell = (week = {}, j) => {
     const { index, title, numDays } = week
     const style = Object.assign({}, defaultCellStyle, week.style)
-    const { fill } = style
+    const { type, fill } = style
 
     const isLastWeek = index % numWeeks === numWeeks - 1
     let width = cellWidth
     if (isLastWeek) width = cellWidth - 7 + numDays
 
-    return (
-      <rect
-        key={index}
-        x={j * (cellWidth + 2 * cellMargin)}
-        y={0}
-        height={cellHeight}
-        width={width}
-        fill={fill}
-        data-tip={title}
-      />
-    )
+    if (type === 'circle') {
+      return (
+        <circle
+          key={index}
+          cx={j * (cellWidth + 2 * cellMargin) + cellHeight / 2}
+          cy={cellHeight / 2}
+          r={circleRadius}
+          fill={fill}
+          data-tip={title}
+        />
+      )
+    } else if (type === 'rect') {
+      return (
+        <rect
+          key={index}
+          x={j * (cellWidth + 2 * cellMargin)}
+          y={0}
+          height={cellHeight}
+          width={width}
+          fill={fill}
+          data-tip={title}
+        />
+      )
+    }
+    return null
   }
 
   renderYearRow = (year, i) => {
@@ -127,7 +141,9 @@ const ageDistance = 5
 
 const cellWidth = 7
 const cellHeight = 7
+const circleRadius = 4
 const cellMargin = 1
 const defaultCellStyle = {
+  type: 'rect',
   fill: '#eeeeee'
 }

@@ -3,7 +3,7 @@ import { Container, Grid, Header, Menu } from 'semantic-ui-react'
 import isNil from 'lodash/isNil'
 import range from 'lodash/range'
 
-// import getDateString from './utils/getDateString'
+import getDateString from './utils/getDateString'
 import dateDiffInDays from './utils/dateDiffInDays'
 
 import WeekMatrix from './components/WeekMatrix'
@@ -149,14 +149,20 @@ class App extends Component {
       })
 
       for (const event of calendar.events) {
-        const weeks = findWeeks(years, event)
-        weeks.forEach(week => {
-          let durationStr = `${event.start} ~ ${event.end}`
-          if (event.start === event.end) durationStr = `${event.start}`
-          week.title = `${event.name} (${durationStr})`
-          week.style = event.style
-        })
+        applyEvent(years, event)
       }
+
+      const today = new Date()
+      const todayEvent = {
+        name: 'Today',
+        start: getDateString(today),
+        end: getDateString(today),
+        style: {
+          type: 'circle',
+          fill: '#FF4136'
+        }
+      }
+      applyEvent(years, todayEvent)
     }
 
     return (
@@ -244,4 +250,14 @@ const findIndexInYears = (years, date) => {
     yearIndex,
     weekIndex
   }
+}
+
+const applyEvent = (years, event) => {
+  const weeks = findWeeks(years, event)
+  weeks.forEach(week => {
+    let durationStr = `${event.start} ~ ${event.end}`
+    if (event.start === event.end) durationStr = `${event.start}`
+    week.title = `${event.name} (${durationStr})`
+    week.style = event.style
+  })
 }

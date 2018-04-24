@@ -42,6 +42,24 @@ class App extends Component {
     }
   }
 
+  componentDidMount() {
+    const stateStr = localStorage.getItem('state')
+    if (!stateStr) return
+
+    try {
+      const state = JSON.parse(stateStr)
+      this.setState(state)
+    } catch (err) {
+      console.error('failed to parse state from local storage')
+    }
+  }
+
+  setState(stateChange) {
+    super.setState(stateChange, () => {
+      localStorage.setItem('state', JSON.stringify(this.state))
+    })
+  }
+
   editProfile = change => {
     const { profile } = this.state
     const newProfile = Object.assign({}, profile, change)

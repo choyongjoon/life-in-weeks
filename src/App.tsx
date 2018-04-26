@@ -114,7 +114,7 @@ class App extends React.Component {
       end: getDateString(today),
       style: {
         type: 'circle',
-        fill: '#FF4136'
+        fill: '#fc5c65'
       }
     }
     life.applyEvent(todayEvent)

@@ -1,18 +1,23 @@
 import * as React from 'react'
 import { Button, Form, Header, Segment } from 'semantic-ui-react'
 
+import colors from '../colors'
+const colorOptions = colors.map(x =>
+  Object.assign({}, x, { text: x.name, key: x.name })
+)
+
 export interface IConfigProps {
   profile: {
-    dob: string,
+    dob: string
     lifeExpectancy: number | string
-  },
+  }
   calendar: {
-    name: string,
+    name: string
     events: any[]
-  },
-  editProfile: any,
-  editCalendar: any,
-  addEvent: any,
+  }
+  editProfile: any
+  editCalendar: any
+  addEvent: any
   editEvent: any
 }
 
@@ -141,23 +146,3 @@ class Config extends React.Component<IConfigProps, {}> {
 }
 
 export default Config
-
-const colorOptions = [
-  { key: 'n', text: 'Navy', value: '#001f3f' },
-  { key: 'blu', text: 'Blue', value: '#0074D9' },
-  { key: 'a', text: 'Aqua', value: '#7FDBFF' },
-  { key: 't', text: 'Teal', value: '#39CCCC' },
-  { key: 'ol', text: 'Olive', value: '#3D9970' },
-  { key: 'gre', text: 'Green', value: '#2ECC40' },
-  { key: 'l', text: 'Lime', value: '#01FF70' },
-  { key: 'y', text: 'Yellow', value: '#FFDC00' },
-  { key: 'or', text: 'Orange', value: '#FF851B' },
-  { key: 'r', text: 'Red', value: '#FF4136' },
-  { key: 'm', text: 'Maroon', value: '#F012BE' },
-  { key: 'f', text: 'Fuchsia', value: '#F012BE' },
-  { key: 'p', text: 'Purple', value: '#B10DC9' },
-  { key: 'bla', text: 'Black', value: '#111111' },
-  { key: 'gra', text: 'Gray', value: '#AAAAAA' },
-  { key: 's', text: 'Silver', value: '#DDDDDD' },
-  { key: 'w', text: 'White', value: '#FFFFFF' }
-]

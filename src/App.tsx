@@ -1,9 +1,9 @@
-import { isNil, range } from 'lodash'
 import * as React from 'react'
 import { Container, Grid, Header, Menu } from 'semantic-ui-react'
 
-import dateDiffInDays from './utils/dateDiffInDays'
 import getDateString from './utils/getDateString'
+
+import Life from './models/Life'
 
 import Config from './components/Config'
 import WeekMatrix from './components/WeekMatrix'
@@ -103,65 +103,21 @@ class App extends React.Component {
     const { profile, calendar } = this.state
     const { dob, lifeExpectancy } = profile
 
-    const numRows = Math.min(lifeExpectancy, 200)
-    let years: any[] = []
-    if (!isNaN(new Date(dob).getTime())) {
-      years = range(numRows).map((yearIndex: number) => {
-        const startOfYear = new Date(dob)
-        startOfYear.setFullYear(startOfYear.getFullYear() + yearIndex)
-        const endOfYear = new Date(dob)
-        endOfYear.setFullYear(endOfYear.getFullYear() + yearIndex + 1)
-        endOfYear.setDate(endOfYear.getDate() - 1)
+    const life = new Life(dob, lifeExpectancy)
 
-        const weeks = range(numWeeks).map((weekIndex: number) => {
-          const index = yearIndex * numWeeks + weekIndex
+    for (const event of calendar.events) life.applyEvent(event)
 
-          const start = new Date(startOfYear.getTime())
-          start.setDate(start.getDate() + weekIndex * numDays)
-
-          let end = new Date(startOfYear.getTime())
-          end.setDate(end.getDate() + (weekIndex + 1) * numDays - 1)
-
-          let numDaysInWeek = numDays
-
-          const isLastWeek = weekIndex % numWeeks === numWeeks - 1
-          if (isLastWeek) {
-            end = new Date(endOfYear.getTime())
-            numDaysInWeek = dateDiffInDays(start, end) + 1
-          }
-
-          return {
-            index,
-            // title: `${getDateString(start)} ~ ${getDateString(end)} (${index + 1})`,
-            start,
-            end,
-            numDays: numDaysInWeek
-          }
-        })
-
-        return {
-          index: yearIndex,
-          start: startOfYear,
-          end: endOfYear,
-          weeks
-        }
-      })
-
-      for (const event of calendar.events)
-        applyEvent(years, event)
-
-      const today = new Date()
-      const todayEvent = {
-        name: 'Today',
-        start: getDateString(today),
-        end: getDateString(today),
-        style: {
-          type: 'circle',
-          fill: '#FF4136'
-        }
+    const today = new Date()
+    const todayEvent = {
+      name: 'Today',
+      start: getDateString(today),
+      end: getDateString(today),
+      style: {
+        type: 'circle',
+        fill: '#FF4136'
       }
-      applyEvent(years, todayEvent)
     }
+    life.applyEvent(todayEvent)
 
     return (
       <div className="App">
@@ -176,7 +132,7 @@ class App extends React.Component {
           <Grid.Row />
           <Grid.Column>
             <Header as="h1">Life in Weeks</Header>
-            <WeekMatrix years={years} />
+            <WeekMatrix life={life} />
           </Grid.Column>
           <Grid.Column>
             <Header as="h2">Config</Header>
@@ -196,65 +152,3 @@ class App extends React.Component {
 }
 
 export default App
-
-const numWeeks = 52
-const numDays = 7
-
-const findWeeks = (years: any[], event: any) => {
-  const eventStart = new Date(event.start)
-  const eventEnd = new Date(event.end)
-  if (eventStart > eventEnd) return []
-
-  const startIndex = findIndexInYears(years, eventStart)
-  const endIndex = findIndexInYears(years, eventEnd)
-  if (!startIndex) return []
-
-  const weeksInRange = []
-  const endYearIndex = endIndex ? endIndex.yearIndex : years.length - 1
-  for (let i = startIndex.yearIndex; i <= endYearIndex; i++) {
-    const { weeks } = years[i]
-    let startWeekIndex = 0
-    if (i === startIndex.yearIndex) startWeekIndex = startIndex.weekIndex
-    let endWeekIndex = weeks.length - 1
-    if (i === endYearIndex && endIndex && !isNil(endIndex.weekIndex))
-      endWeekIndex = endIndex.weekIndex
-    for (let j = startWeekIndex; j <= endWeekIndex; j++)
-      weeksInRange.push(weeks[j])
-  }
-  return weeksInRange
-}
-
-const findIndexInYears = (years: any[], date: any) => {
-  if (!years[0]) return null
-
-  const startYear = years[0].start.getFullYear()
-  const dateYear = date.getFullYear()
-  let yearIndex = dateYear - startYear
-  let year = years[yearIndex]
-  if (year && year.start > date) {
-    yearIndex -= 1
-    year = years[yearIndex]
-  }
-  if (!year) return null
-
-  const { start, weeks } = year
-  const daysDiff = dateDiffInDays(start, date)
-  let weekIndex = Math.floor(daysDiff / numDays)
-  if (weekIndex === 52 && daysDiff <= 365) weekIndex = 51
-  if (!weeks[weekIndex]) return null
-
-  return {
-    yearIndex,
-    weekIndex
-  }
-}
-
-const applyEvent = (years: any[], event: any) => {
-  const weeks = findWeeks(years, event)
-  weeks.forEach(week => {
-    let durationStr = `${event.start} ~ ${event.end}`
-    if (event.start === event.end) durationStr = `${event.start}`
-    week.title = `${event.name} (${durationStr})`
-    week.style = event.style
-  })
-}

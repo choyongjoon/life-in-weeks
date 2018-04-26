@@ -2,19 +2,22 @@ import { range } from 'lodash'
 import * as React from 'react'
 import * as ReactTooltip from 'react-tooltip'
 
+import { numWeeks } from '../constants'
+import Life from '../models/Life'
+import Week from '../models/Week'
+
 export interface IWeekMatrixProps {
-  years: any[]
+  life: Life
 }
 
-export interface IWeek {
-  index: number,
-  title: string,
-  numDays: number,
-  style: any
-}
-
-class WeekMatrix extends React.Component<IWeekMatrixProps, {}>  {
-  public renderMonth = ({ index, cellIndex }: { index: number, cellIndex: number }) => {
+class WeekMatrix extends React.Component<IWeekMatrixProps, {}> {
+  public renderMonth = ({
+    index,
+    cellIndex
+  }: {
+    index: number
+    cellIndex: number
+  }) => {
     const x = cellIndex * (cellWidth + 2 * cellMargin)
     const y = 24
 
@@ -48,7 +51,7 @@ class WeekMatrix extends React.Component<IWeekMatrixProps, {}>  {
     )
   }
 
-  public renderWeekCell = (week: IWeek, j: number) => {
+  public renderWeekCell = (week: Week, j: number) => {
     const { index, title, numDays } = week
     const style = Object.assign({}, defaultCellStyle, week.style)
     const { type, fill } = style
@@ -95,7 +98,8 @@ class WeekMatrix extends React.Component<IWeekMatrixProps, {}>  {
   }
 
   public render() {
-    const { years } = this.props
+    const { life } = this.props
+    const { years } = life
     const numRows = years.length
 
     const height = numRows * (cellHeight + 2 * cellMargin)
@@ -137,7 +141,6 @@ class WeekMatrix extends React.Component<IWeekMatrixProps, {}>  {
 }
 
 export default WeekMatrix
-const numWeeks = 52
 
 const marginTop = 30
 const marginLeft = 30

@@ -1,31 +1,30 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import * as React from 'react'
 import { Button, Form, Header, Segment } from 'semantic-ui-react'
 
-class Config extends Component {
-  static propTypes = {
-    profile: PropTypes.shape({
-      dob: PropTypes.string.isRequired,
-      lifeExpectancy: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    }),
-    calendar: PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      events: PropTypes.array.isRequired
-    }),
-    editProfile: PropTypes.func.isRequired,
-    editCalendar: PropTypes.func.isRequired,
-    addEvent: PropTypes.func.isRequired,
-    editEvent: PropTypes.func.isRequired
-  }
+export interface IConfigProps {
+  profile: {
+    dob: string,
+    lifeExpectancy: number | string
+  },
+  calendar: {
+    name: string,
+    events: any[]
+  },
+  editProfile: any,
+  editCalendar: any,
+  addEvent: any,
+  editEvent: any
+}
 
-  onChangeLifeExpectancy = e => {
+class Config extends React.Component<IConfigProps, {}> {
+  public onChangeLifeExpectancy = (e: React.FormEvent<HTMLInputElement>) => {
     const { editProfile } = this.props
-    let lifeExpectancy = parseInt(e.target.value, 10)
+    let lifeExpectancy: number | string = parseInt(e.currentTarget.value, 10)
     if (isNaN(lifeExpectancy)) lifeExpectancy = ''
     editProfile({ lifeExpectancy })
   }
 
-  render() {
+  public render() {
     const {
       profile,
       editProfile,
@@ -35,7 +34,7 @@ class Config extends Component {
       editEvent
     } = this.props
     const { dob, lifeExpectancy } = profile
-    const { name, events } = calendar
+    const { name: calendarName, events } = calendar
 
     return (
       <div>
@@ -54,7 +53,6 @@ class Config extends Component {
             <Form.Field>
               <label>Life Expectancy</label>
               <input
-                label="Life Expectancy"
                 placeholder="80"
                 type="number"
                 value={lifeExpectancy}
@@ -69,7 +67,7 @@ class Config extends Component {
             <label>Name</label>
             <input
               type="text"
-              value={name}
+              value={calendarName}
               onChange={e => editCalendar({ name: e.target.value })}
             />
           </Form.Field>

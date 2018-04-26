@@ -1,14 +1,20 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import ReactTooltip from 'react-tooltip'
-import range from 'lodash/range'
+import { range } from 'lodash'
+import * as React from 'react'
+import * as ReactTooltip from 'react-tooltip'
 
-class WeekMatrix extends Component {
-  static propTypes = {
-    years: PropTypes.array.isRequired
-  }
+export interface IWeekMatrixProps {
+  years: any[]
+}
 
-  renderMonth = ({ index, cellIndex }) => {
+export interface IWeek {
+  index: number,
+  title: string,
+  numDays: number,
+  style: any
+}
+
+class WeekMatrix extends React.Component<IWeekMatrixProps, {}>  {
+  public renderMonth = ({ index, cellIndex }: { index: number, cellIndex: number }) => {
     const x = cellIndex * (cellWidth + 2 * cellMargin)
     const y = 24
 
@@ -25,7 +31,7 @@ class WeekMatrix extends Component {
     )
   }
 
-  renderAge = age => {
+  public renderAge = (age: number) => {
     const x = 24
     const y = (age + 1) * (cellHeight + 2 * cellMargin)
 
@@ -42,7 +48,7 @@ class WeekMatrix extends Component {
     )
   }
 
-  renderWeekCell = (week = {}, j) => {
+  public renderWeekCell = (week: IWeek, j: number) => {
     const { index, title, numDays } = week
     const style = Object.assign({}, defaultCellStyle, week.style)
     const { type, fill } = style
@@ -51,7 +57,7 @@ class WeekMatrix extends Component {
     let width = cellWidth
     if (isLastWeek) width = cellWidth - 7 + numDays
 
-    if (type === 'circle') {
+    if (type === 'circle')
       return (
         <circle
           key={index}
@@ -62,7 +68,7 @@ class WeekMatrix extends Component {
           data-tip={title}
         />
       )
-    } else if (type === 'rect') {
+    else if (type === 'rect')
       return (
         <rect
           key={index}
@@ -74,11 +80,10 @@ class WeekMatrix extends Component {
           data-tip={title}
         />
       )
-    }
     return null
   }
 
-  renderYearRow = (year, i) => {
+  public renderYearRow = (year: any[any], i: number) => {
     const { weeks } = year
     const x = 0
     const y = i * (cellHeight + 2 * cellMargin)
@@ -89,7 +94,7 @@ class WeekMatrix extends Component {
     )
   }
 
-  render() {
+  public render() {
     const { years } = this.props
     const numRows = years.length
 
@@ -109,7 +114,7 @@ class WeekMatrix extends Component {
     }
 
     const ages = range(Math.ceil(numRows / ageDistance)).map(
-      x => x * ageDistance
+      (x: number) => x * ageDistance
     )
 
     return (

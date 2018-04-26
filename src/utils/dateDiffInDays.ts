@@ -1,6 +1,6 @@
 const msPerDay = 1000 * 60 * 60 * 24
 
-const dateDiffInDays = (a, b) => {
+const dateDiffInDays = (a: Date, b: Date) => {
   // Discard the time and time-zone information.
   const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate())
   const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate())

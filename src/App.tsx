@@ -1,18 +1,17 @@
-import React, { Component } from 'react'
+import { isNil, range } from 'lodash'
+import * as React from 'react'
 import { Container, Grid, Header, Menu } from 'semantic-ui-react'
-import isNil from 'lodash/isNil'
-import range from 'lodash/range'
 
-import getDateString from './utils/getDateString'
 import dateDiffInDays from './utils/dateDiffInDays'
+import getDateString from './utils/getDateString'
 
-import WeekMatrix from './components/WeekMatrix'
 import Config from './components/Config'
+import WeekMatrix from './components/WeekMatrix'
 
 import './App.css'
 
-class App extends Component {
-  state = {
+class App extends React.Component {
+  public state = {
     profile: {
       dob: '1990-01-01',
       lifeExpectancy: 80
@@ -42,7 +41,7 @@ class App extends Component {
     }
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     const stateStr = localStorage.getItem('state')
     if (!stateStr) return
 
@@ -50,29 +49,29 @@ class App extends Component {
       const state = JSON.parse(stateStr)
       this.setState(state)
     } catch (err) {
-      console.error('failed to parse state from local storage')
+      // console.error('failed to parse state from local storage')
     }
   }
 
-  setState(stateChange) {
+  public setState(stateChange: any) {
     super.setState(stateChange, () => {
       localStorage.setItem('state', JSON.stringify(this.state))
     })
   }
 
-  editProfile = change => {
+  public editProfile = (change: any) => {
     const { profile } = this.state
     const newProfile = Object.assign({}, profile, change)
     this.setState({ profile: newProfile })
   }
 
-  editCalendar = change => {
+  public editCalendar = (change: any) => {
     const { calendar } = this.state
     const newCalendar = Object.assign({}, calendar, change)
     this.setState({ calendar: newCalendar })
   }
 
-  addEvent = () => {
+  public addEvent = () => {
     const { calendar } = this.state
     const lastId =
       calendar.events.length > 0
@@ -89,7 +88,7 @@ class App extends Component {
     this.editCalendar({ events })
   }
 
-  editEvent = (eventId, change) => {
+  public editEvent = (eventId: number, change: any) => {
     const { calendar } = this.state
     const { events } = calendar
     const eventIndex = events.findIndex(event => event.id === eventId)
@@ -100,21 +99,21 @@ class App extends Component {
     this.editCalendar({ events: newEvents })
   }
 
-  render() {
+  public render() {
     const { profile, calendar } = this.state
     const { dob, lifeExpectancy } = profile
 
     const numRows = Math.min(lifeExpectancy, 200)
-    let years = []
+    let years: any[] = []
     if (!isNaN(new Date(dob).getTime())) {
-      years = range(numRows).map(yearIndex => {
+      years = range(numRows).map((yearIndex: number) => {
         const startOfYear = new Date(dob)
         startOfYear.setFullYear(startOfYear.getFullYear() + yearIndex)
         const endOfYear = new Date(dob)
         endOfYear.setFullYear(endOfYear.getFullYear() + yearIndex + 1)
         endOfYear.setDate(endOfYear.getDate() - 1)
 
-        const weeks = range(numWeeks).map(weekIndex => {
+        const weeks = range(numWeeks).map((weekIndex: number) => {
           const index = yearIndex * numWeeks + weekIndex
 
           const start = new Date(startOfYear.getTime())
@@ -148,9 +147,8 @@ class App extends Component {
         }
       })
 
-      for (const event of calendar.events) {
+      for (const event of calendar.events)
         applyEvent(years, event)
-      }
 
       const today = new Date()
       const todayEvent = {
@@ -202,7 +200,7 @@ export default App
 const numWeeks = 52
 const numDays = 7
 
-const findWeeks = (years, event) => {
+const findWeeks = (years: any[], event: any) => {
   const eventStart = new Date(event.start)
   const eventEnd = new Date(event.end)
   if (eventStart > eventEnd) return []
@@ -220,14 +218,13 @@ const findWeeks = (years, event) => {
     let endWeekIndex = weeks.length - 1
     if (i === endYearIndex && endIndex && !isNil(endIndex.weekIndex))
       endWeekIndex = endIndex.weekIndex
-    for (let j = startWeekIndex; j <= endWeekIndex; j++) {
+    for (let j = startWeekIndex; j <= endWeekIndex; j++)
       weeksInRange.push(weeks[j])
-    }
   }
   return weeksInRange
 }
 
-const findIndexInYears = (years, date) => {
+const findIndexInYears = (years: any[], date: any) => {
   if (!years[0]) return null
 
   const startYear = years[0].start.getFullYear()
@@ -240,7 +237,7 @@ const findIndexInYears = (years, date) => {
   }
   if (!year) return null
 
-  let { start, weeks } = year
+  const { start, weeks } = year
   const daysDiff = dateDiffInDays(start, date)
   let weekIndex = Math.floor(daysDiff / numDays)
   if (weekIndex === 52 && daysDiff <= 365) weekIndex = 51
@@ -252,7 +249,7 @@ const findIndexInYears = (years, date) => {
   }
 }
 
-const applyEvent = (years, event) => {
+const applyEvent = (years: any[], event: any) => {
   const weeks = findWeeks(years, event)
   weeks.forEach(week => {
     let durationStr = `${event.start} ~ ${event.end}`

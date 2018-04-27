@@ -6,7 +6,7 @@ import getDateString from './utils/getDateString'
 import Life from './models/Life'
 
 import Config from './components/Config'
-import WeekMatrix from './components/WeekMatrix'
+import LifeMatrix from './components/LifeMatrix'
 
 import './App.css'
 
@@ -132,7 +132,7 @@ class App extends React.Component {
           <Grid.Row />
           <Grid.Column>
             <Header as="h1">Life in Weeks</Header>
-            <WeekMatrix life={life} />
+            <LifeMatrix life={life} />
           </Grid.Column>
           <Grid.Column>
             <Header as="h2">Config</Header>

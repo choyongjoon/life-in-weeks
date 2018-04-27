@@ -2,6 +2,7 @@ import { numDays, numWeeks } from '../constants'
 import dateDiffInDays from '../utils/dateDiffInDays'
 
 export interface IWeekStyle {
+  type: string
   fill: string
 }
 

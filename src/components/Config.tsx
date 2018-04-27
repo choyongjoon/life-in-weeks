@@ -2,9 +2,11 @@ import * as React from 'react'
 import { Button, Form, Header, Segment } from 'semantic-ui-react'
 
 import colors from '../colors'
-const colorOptions = colors.map(x =>
-  Object.assign({}, x, { text: x.name, key: x.name })
-)
+const colorOptions = colors.map(x => ({
+  key: x.name,
+  text: x.name,
+  value: x.value
+}))
 
 export interface IConfigProps {
   profile: {

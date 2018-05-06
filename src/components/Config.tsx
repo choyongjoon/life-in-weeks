@@ -1,12 +1,7 @@
 import * as React from 'react'
-import { Button, Form, Header, Segment } from 'semantic-ui-react'
+import { Button, Form, Header, List } from 'semantic-ui-react'
 
-import colors from '../colors'
-const colorOptions = colors.map(x => ({
-  key: x.name,
-  text: x.name,
-  value: x.value
-}))
+import LifeEventItem from './LifeEventItem'
 
 export interface IConfigProps {
   profile: {
@@ -24,12 +19,19 @@ export interface IConfigProps {
 }
 
 class Config extends React.Component<IConfigProps, {}> {
+  public state = {
+    editingEventId: null
+  }
+
   public onChangeLifeExpectancy = (e: React.FormEvent<HTMLInputElement>) => {
     const { editProfile } = this.props
     let lifeExpectancy: number | string = parseInt(e.currentTarget.value, 10)
     if (isNaN(lifeExpectancy)) lifeExpectancy = ''
     editProfile({ lifeExpectancy })
   }
+
+  public startEditting = (editingEventId: number) =>
+    this.setState({ editingEventId })
 
   public render() {
     const {
@@ -40,6 +42,7 @@ class Config extends React.Component<IConfigProps, {}> {
       addEvent,
       editEvent
     } = this.props
+    const { editingEventId } = this.state
     const { dob, lifeExpectancy } = profile
     const { name: calendarName, events } = calendar
 
@@ -80,68 +83,21 @@ class Config extends React.Component<IConfigProps, {}> {
           </Form.Field>
         </Form>
         <Header as="h4">Events</Header>
-        <Segment.Group>
+        <List celled>
           {events.map(event => {
+            const isEditing = event.id === editingEventId
             return (
-              <Segment key={event.id}>
-                <Form>
-                  <Form.Group widths="equal">
-                    <Form.Field>
-                      <label>Name</label>
-                      <input
-                        type="text"
-                        value={event.name}
-                        onChange={e =>
-                          editEvent(event.id, { name: e.target.value })
-                        }
-                      />
-                    </Form.Field>
-                    <Form.Field>
-                      <label>Start</label>
-                      <input
-                        placeholder="2018-04-19"
-                        type="text"
-                        value={event.start}
-                        onChange={e =>
-                          editEvent(event.id, { start: e.target.value })
-                        }
-                      />
-                    </Form.Field>
-                    <Form.Field>
-                      <label>End</label>
-                      <input
-                        placeholder="2018-04-19"
-                        type="text"
-                        value={event.end}
-                        onChange={e =>
-                          editEvent(event.id, { end: e.target.value })
-                        }
-                      />
-                    </Form.Field>
-                  </Form.Group>
-                  <Header as="h5">Style</Header>
-                  <Form.Group widths="equal">
-                    <Form.Select
-                      inline
-                      label="Color"
-                      name="fill"
-                      options={colorOptions}
-                      value={event.style.fill}
-                      onChange={(e, { name, value }) =>
-                        editEvent(event.id, {
-                          style: Object.assign({}, event.style, {
-                            [name]: value
-                          })
-                        })
-                      }
-                    />
-                  </Form.Group>
-                </Form>
-              </Segment>
+              <LifeEventItem
+                key={event.id}
+                event={event}
+                isEditing={isEditing}
+                startEditting={this.startEditting}
+                editEvent={editEvent}
+              />
             )
           })}
-          <Button attached="bottom" content="Add Event" onClick={addEvent} />
-        </Segment.Group>
+          <Button content="Add Event" onClick={addEvent} />
+        </List>
       </div>
     )
   }

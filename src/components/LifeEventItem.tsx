@@ -1,12 +1,7 @@
 import * as React from 'react'
-import { Form, Header, List } from 'semantic-ui-react'
+import { Form, List } from 'semantic-ui-react'
 
-import colors from '../colors'
-const colorOptions = colors.map(x => ({
-  key: x.name,
-  text: x.name,
-  value: x.value
-}))
+import StyleIcon from './StyleIcon'
 
 export interface ILifeEventItemProps {
   event: {
@@ -33,21 +28,23 @@ export default class LifeEventItem extends React.Component<
 
   public onClick = () => this.props.startEditting(this.props.event.id)
 
+  public editStyle = (change: {}) => {
+    const { event, editEvent } = this.props
+    editEvent(event.id, { style: Object.assign({}, event.style, change) })
+  }
+
   public render() {
     const { event, editEvent, isEditing } = this.props
 
     const duration =
       event.start === event.end ? event.start : `${event.start} ~ ${event.end}`
-    const color = event.style && event.style.fill
 
     if (isEditing) {
       return (
         <List.Item>
-          <List.Icon
-            name="square"
-            size="large"
-            verticalAlign="middle"
-            style={{ color, cursor: 'pointer' }}
+          <StyleIcon
+            style={event.style}
+            editStyle={this.editStyle}
           />
           <List.Content>
             <Form>
@@ -82,23 +79,6 @@ export default class LifeEventItem extends React.Component<
                   />
                 </Form.Field>
               </Form.Group>
-              <Header as="h5">Style</Header>
-              <Form.Group widths="equal">
-                <Form.Select
-                  inline
-                  label="Color"
-                  name="fill"
-                  options={colorOptions}
-                  value={event.style.fill}
-                  onChange={(e, { name, value }) =>
-                    editEvent(event.id, {
-                      style: Object.assign({}, event.style, {
-                        [name]: value
-                      })
-                    })
-                  }
-                />
-              </Form.Group>
             </Form>
           </List.Content>
         </List.Item>
@@ -107,11 +87,9 @@ export default class LifeEventItem extends React.Component<
 
     return (
       <List.Item style={{ cursor: 'text' }} onClick={this.onClick}>
-        <List.Icon
-          name="square"
-          size="large"
-          verticalAlign="middle"
-          style={{ color, cursor: 'pointer' }}
+        <StyleIcon
+          style={event.style}
+          editStyle={this.editStyle}
         />
         <List.Content>
           <List.Header>{event.name}</List.Header>

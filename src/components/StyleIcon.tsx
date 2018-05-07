@@ -10,11 +10,7 @@ export interface IStyleIconProps {
   editStyle: any
 }
 
-export default class StyleIcon extends React.Component<
-  IStyleIconProps,
-  {}
-> {
-
+export default class StyleIcon extends React.Component<IStyleIconProps, {}> {
   public onClickItem = (value: string) => () => {
     const { editStyle } = this.props
     editStyle({ fill: value })
@@ -30,7 +26,7 @@ export default class StyleIcon extends React.Component<
     return (
       <div>
         {splittedColors.map(colorChunks => (
-          <List horizontal>
+          <List horizontal key={colorChunks[0].value}>
             {colorChunks.map(x => (
               <List.Item key={x.value} size="small">
                 <List.Icon
@@ -65,10 +61,14 @@ export default class StyleIcon extends React.Component<
       <Popup
         trigger={trigger}
         content={content}
-        on='click'
-        position='bottom left'
-        onOpen={e => { e.stopPropagation()}}
-        onClose={e => { e.stopPropagation()}}
+        on="click"
+        position="bottom left"
+        onOpen={e => {
+          e.stopPropagation()
+        }}
+        onClose={e => {
+          e.stopPropagation()
+        }}
       />
     )
   }
